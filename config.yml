@@ -1,0 +1,24 @@
+# DiaSMP settings
+teleport-delay-seconds: 5
+combat-tag-seconds: 60
+string-cooldown-seconds: 60
+rtp:
+  radius: 5000
+  attempts: 30
+teams:
+  max-size: 5
+brewing:
+  enabled: true
+  # Vanilla brewing is accelerated by completing brewing events immediately.
+  instant: true
+villagers:
+  allow-pickup: true
+  unlimited-trades: true
+recipes:
+  golden-apple:
+    enabled: true
+    apple: APPLE
+    gold-ingots: 2
+  cobweb:
+    enabled: true
+anti-xray-note: "Configure Paper's built-in anti-xray in config/paper-world-defaults.yml; see README."

@@ -1,0 +1,25 @@
+name: DiaSMP
+version: 1.0.0
+main: com.diasmp.DiaSMP
+api-version: '1.21'
+description: Core features for Dia SMP
+commands:
+  home:
+    description: Teleport to your saved home
+    usage: /home
+  sethome:
+    description: Set your home
+    usage: /sethome
+  rtp:
+    description: Random teleport
+    usage: /rtp
+  team:
+    description: Manage teams
+    usage: /team <create|invite|join|leave|kick|disband|info|list>
+  gaps:
+    description: Craft a golden apple using an apple and two gold ingots
+    usage: /gaps
+permissions:
+  diasmp.admin:
+    description: Administer DiaSMP settings
+    default: op
