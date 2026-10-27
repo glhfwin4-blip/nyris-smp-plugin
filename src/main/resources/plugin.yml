@@ -1,7 +1,7 @@
 name: DiaSMP
 version: 1.0.0
 main: com.diasmp.DiaSMP
-api-version: '1.21'
+api-version: '1.21.11'
 description: Core features for Dia SMP
 commands:
   home:
