@@ -15,10 +15,10 @@ commands:
     usage: /rtp
   team:
     description: Manage teams
-    usage: /team <create|invite|join|leave|kick|disband|info|list>
+    usage: usage: '/team <create|invite|join|leave|kick|disband|info|list>'
   gaps:
     description: Craft a golden apple using an apple and two gold ingots
-    usage: /gaps
+    usage: usage: '/gaps'
 permissions:
   diasmp.admin:
     description: Administer DiaSMP settings
