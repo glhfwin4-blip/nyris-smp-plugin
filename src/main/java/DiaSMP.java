@@ -32,20 +32,32 @@ public final class DiaSMP extends JavaPlugin implements Listener, CommandExecuto
     private final Map<UUID, Location> pendingTeleport = new HashMap<>();
     private final Random random = new Random();
 
-    @Override public void onEnable() {
-        saveDefaultConfig();
-        homesFile = new File(getDataFolder(), "homes.yml");
-        teamsFile = new File(getDataFolder(), "teams.yml");
-        homes = YamlConfiguration.loadConfiguration(homesFile);
-        teams = YamlConfiguration.loadConfiguration(teamsFile);
-        for (String cmd : List.of("home", "sethome", "rtp", "team", "gaps")) {
-            Objects.requireNonNull(getCommand(cmd)).setExecutor(this);
-            Objects.requireNonNull(getCommand(cmd)).setTabCompleter(this);
+  @Override
+public void onEnable() {
+    saveDefaultConfig();
+    
+    homesFile = new File(getDataFolder(), "homes.yml");
+    teamsFile = new File(getDataFolder(), "teams.yml");
+    homes = YamlConfiguration.loadConfiguration(homesFile);
+    teams = YamlConfiguration.loadConfiguration(teamsFile);
+    
+    // Explicitly listing all 5 of your custom commands safely
+    String[] commands = {"team", "home", "sethome", "rtp", "gaps"};
+    for (String cmd : commands) {
+        var pluginCmd = getCommand(cmd);
+        if (pluginCmd != null) {
+            pluginCmd.setExecutor(this);
+            pluginCmd.setTabCompleter(this);
+        } else {
+            getLogger().warning("Command /" + cmd + " is registered in code but missing from plugin.yml!");
         }
-        getServer().getPluginManager().registerEvents(this, this);
-        registerRecipes();
-        getLogger().info("DiaSMP enabled.");
     }
+    
+    getServer().getPluginManager().registerEvents(this, this);
+    registerRecipes();
+    getLogger().info("DiaSMP enabled successfully!");
+}
+
 
     @Override public void onDisable() { save(homes, homesFile); save(teams, teamsFile); }
     private void save(YamlConfiguration yaml, File file) { try { yaml.save(file); } catch (IOException e) { getLogger().severe("Could not save " + file.getName() + ": " + e.getMessage()); } }
