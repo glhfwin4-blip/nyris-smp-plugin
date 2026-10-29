@@ -270,6 +270,12 @@ public void onMaceDamage(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
         }
     }
 }
+           // ... your last event handler code is up here ...
+    }
+}
+ 
+        
+        
         
     
 
