@@ -207,8 +207,22 @@ public void onEnable() {
         if(attacker!=null) combatUntil.put(attacker.getUniqueId(),until);
         if(victim!=null) combatUntil.put(victim.getUniqueId(),until);
     }
-    @EventHandler public void onQuit(PlayerQuitEvent e) { pendingTeleport.remove(e.getPlayer().getUniqueId()); carriedVillagers.remove(e.getPlayer().getUniqueId()); }
-    @EventHandler public void onBrew(BrewEvent e) { if(getConfig().getBoolean("brewing.enabled",true) && getConfig().getBoolean("brewing.instant",true)) e.setCancelled(false); }
+
+@EventHandler
+public void onBrewTimeUpdate(org.bukkit.event.block.BlockPhysicsEvent e) {
+    if (e.getChangedType() == org.bukkit.Material.BREWING_STAND) {
+        org.bukkit.block.Block b = e.getBlock();
+        if (b.getState() instanceof org.bukkit.block.BrewingStand) {
+            org.bukkit.block.BrewingStand stand = (org.bukkit.block.BrewingStand) b.getState();
+            // Accelerate brewing if it's currently active
+            if (stand.getBrewingTime() > 1) {
+                stand.setBrewingTime(Math.max(1, stand.getBrewingTime() - 10)); // Adjust speed multiplier here
+                stand.update();
+            }
+        }
+    }
+}
+
 
     @EventHandler public void onVillagerInteract(PlayerInteractEntityEvent e) {
         if(!getConfig().getBoolean("villagers.allow-pickup",true) || !(e.getRightClicked() instanceof Villager villager)) return;
@@ -223,10 +237,40 @@ public void onEnable() {
             villager.addPassenger(p); // temporary visible carry-style interaction; not a true inventory pickup
             msg(p,"Villager picked up (temporary carry). Sneak-right-click a villager to interact.");
         }
-    }
-
-    @Override public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if(command.getName().equalsIgnoreCase("team") && args.length==1) return List.of("create","invite","join","leave","kick","disband","info","list");
-        return Collections.emptyList();
+    
+@EventHandler
+public void onStringPlace(org.bukkit.event.block.BlockPlaceEvent e) {
+    Player p = e.getPlayer();
+    if (e.getBlockPlaced().getType() == org.bukkit.Material.STRING || e.getBlockPlaced().getType() == org.bukkit.Material.COBWEB) {
+        long now = System.currentTimeMillis();
+        if (stringCooldown.containsKey(p.getUniqueId()) && stringCooldown.get(p.getUniqueId()) > now) {
+            long timeLeft = (stringCooldown.get(p.getUniqueId()) - now) / 1000;
+            p.sendMessage(org.bukkit.ChatColor.RED + "You must wait " + timeLeft + "s to place string/cobwebs!");
+            e.setCancelled(true);
+            return;
+        }
+        // Set a 1-minute cooldown (60,000 milliseconds)
+        stringCooldown.put(p.getUniqueId(), now + 60000);
     }
 }
+
+@EventHandler
+public void onMaceCraft(org.bukkit.event.inventory.PrepareItemCraftEvent e) {
+    if (e.getRecipe() != null && e.getRecipe().getResult().getType() == org.bukkit.Material.MACE) {
+        e.getInventory().setResult(null); // Blocks players from taking it out of the crafting slot
+    }
+}
+
+@EventHandler
+public void onMaceDamage(org.bukkit.event.entity.EntityDamageByEntityEvent e) {
+    if (e.getDamager() instanceof Player) {
+        Player p = (Player) e.getDamager();
+        if (p.getInventory().getItemInMainHand().getType() == org.bukkit.Material.MACE) {
+            p.sendMessage(org.bukkit.ChatColor.RED + "Maces are disabled on this SMP!");
+            e.setCancelled(true); // Cancels the attack completely
+        }
+    }
+}
+        
+    
+
