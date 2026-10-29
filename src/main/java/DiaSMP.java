@@ -41,17 +41,16 @@ public void onEnable() {
     homes = YamlConfiguration.loadConfiguration(homesFile);
     teams = YamlConfiguration.loadConfiguration(teamsFile);
     
-    // Explicitly listing all 5 of your custom commands safely
-    String[] commands = {"team", "home", "sethome", "rtp", "gaps"};
-    for (String cmd : commands) {
-        var pluginCmd = getCommand(cmd);
-        if (pluginCmd != null) {
-            pluginCmd.setExecutor(this);
-            pluginCmd.setTabCompleter(this);
-        } else {
-            getLogger().warning("Command /" + cmd + " is registered in code but missing from plugin.yml!");
-        }
+    // Explicitly listing all 6 of your custom commands safely
+    String[] commands = {"team", "home", "sethome", "rtp", "gaps", "string"};
+for (String cmd : commands) {
+    var pluginCmd = getCommand(cmd);
+    if (pluginCmd != null) {
+        pluginCmd.setExecutor(this);
+        pluginCmd.setTabCompleter(this);
     }
+}
+
     
     getServer().getPluginManager().registerEvents(this, this);
     registerRecipes();
