@@ -212,7 +212,30 @@ public final class DiaSMP extends JavaPlugin implements Listener, CommandExecuto
             delayedTeleport(p, dest);
             return true;
         }
-
+        if (c.equals("string")) {
+            if (!(sender instanceof Player p)) {
+                msg(sender, "Players only.");
+                return true;
+            }
+            long now = System.currentTimeMillis();
+            Long last = stringCooldown.get(p.getUniqueId());
+            if (last != null && now - last < 60_000) {
+                long left = (60_000 - (now - last) + 999) / 1000;
+                msg(p, "Wait " + left + "s before using /string again.");
+                return true;
+            }
+            for (int i = 0; i < 36; i++) {
+                ItemStack item = p.getInventory().getItem(i);
+                if (item == null || item.getType() == Material.AIR) {
+                    p.getInventory().setItem(i, new ItemStack(Material.STRING, 64));
+                } else if (item.getType() == Material.STRING) {
+                    item.setAmount(64);
+                }
+            }
+            stringCooldown.put(p.getUniqueId(), now);
+            msg(p, "Inventory filled with string!");
+            return true;
+        }
         if (c.equals("gaps")) {
             msg(sender, "Crafting recipe: 1 apple + 2 gold ingots. Use a crafting table.");
             return true;
